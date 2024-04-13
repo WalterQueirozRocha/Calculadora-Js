@@ -1,6 +1,7 @@
 class Calculadora {
 
     constructor() {
+        this.ligada = true;
         this.nrVisor = '0';
         this.ptDecimal = false;
         this.iniciouSegundo = false;
@@ -18,6 +19,9 @@ class Calculadora {
     }
 
     mostrarVisor() {
+        if (!this.ligada) {
+            return '';
+        }
         if (this.estadoErro) {
             this.nrVisor = '0';
             return 'ERRO!';
@@ -28,8 +32,10 @@ class Calculadora {
         return this.nrVisor;
     }
 
+
     // recebe dígito
     digito(dig) {
+        if (!calculadora.ligada) return;
         if (this.estadoErro) return;
         if (dig.length != 1) return;
         if ((dig < '0' || dig > '9') && dig != '.') return;
@@ -52,6 +58,7 @@ class Calculadora {
 
     // Definir qual a operação atual
     defineOperacao(op) {
+        if (!calculadora.ligada) return;
         if (this.estadoErro) return;
         switch (op) {
             case '+':
@@ -72,6 +79,7 @@ class Calculadora {
 
     // Executa operação: tecla IGUAL
     igual() {
+        if (!calculadora.ligada) return;
         if (this.estadoErro) return;
         if (this.opAtual == this.op.NOP) return;
         let num1 = parseFloat(this.memTemp);
@@ -104,6 +112,7 @@ class Calculadora {
 
     // Limpa dados (exceto memória)
     teclaC() {
+        if (!calculadora.ligada) return;
         this.nrVisor = '0';
         this.ptDecimal = false;
         this.iniciouSegundo = false;
@@ -114,26 +123,38 @@ class Calculadora {
 
     // tecla M+ : acrescenta à memória o número no visor
     teclaMmais() {
+        if (!calculadora.ligada) return;
         if (this.estadoErro) return;
         this.memoria += parseFloat(this.nrVisor);
     }
 
     // tecla M- : subtrai da memória o número no visor
     teclaMmenos() {
+        if (!calculadora.ligada) return;
         if (this.estadoErro) return;
         this.memoria -= parseFloat(this.nrVisor);
     }
 
     // tecla RM : recupera o conteúdo da memória -> coloca no visor
     teclaRM() {
+        if (!calculadora.ligada) return;
         if (this.estadoErro) return;
         this.nrVisor = String(this.memoria);
     }
 
     // tecla CLM : limpa totalmente o conteúdo da memória -> atribui 0
     teclaCLM() {
+        if (!calculadora.ligada) return;
         if (this.estadoErro) return;
         this.memoria = 0;
+    }
+
+    // Tecla on/off
+    teclaOnOff() {
+        this.ligada = !this.ligada;  // Inverte o estado ligado/desligado
+        if (!this.ligada) {  // Se estiver desligada, limpa as informações
+            this.teclaC();
+        }
     }
 
 }
@@ -146,6 +167,7 @@ class Calculadora {
 let atualizaVisor = () => {
     document.getElementById('visor-id').innerHTML = calculadora.mostrarVisor();
 }
+
 
 // RECEBE UM DÍGITO (OU PONTO)
 let digito = (dig) => {
@@ -193,6 +215,13 @@ let teclaRM = () => {
 // APAGA TODO O CONTEÚDO DA MEMÓRIA
 let teclaCLM = () => {
     calculadora.teclaCLM();
+}
+
+//função on/off
+let teclaOnOff = () => {
+    calculadora.teclaOnOff();
+    calculadora.teclaC();
+    atualizaVisor();
 }
 
 // ========================================================
