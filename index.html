@@ -13,7 +13,10 @@
     <div class="container">
         <div class="container2">
             <div id="visor-id" class="visor">
-                0
+                <div class="visor-container">
+                    <span class="memoria-m">M</span>
+                    <span class="visor-conteudo">0</span>
+                </div>
             </div>
             <div class="container-teclas">
                 <div onclick="teclaC()" class="tecla-esp">C</div>
@@ -24,6 +27,10 @@
                 <div onclick="teclaMmais()" class="tecla-esp">M+</div>
                 <div onclick="teclaMmenos()" class="tecla-esp">M-</div>
                 <div onclick="defOp('/')" class="tecla-esp">/</div>
+                <div onclick="calculadora.raizQuadrada()" class="tecla-esp">RAIZ</div>
+                <div onclick="calculadora.inverso()" class="tecla-esp">1/x</div>
+                <div onclick="calculadora.trocaSinal()" class="tecla-esp">+/-</div>
+                <div onclick="calculadora.quadrado()" class="tecla-esp">x²</div>
                 <div onclick="digito('7')" class="tecla">7</div>
                 <div onclick="digito('8')" class="tecla">8</div>
                 <div onclick="digito('9')" class="tecla">9</div>
@@ -38,7 +45,7 @@
                 <div onclick="defOp('+')" class="tecla-esp">+</div>
                 <div onclick="digito('.')" class="tecla">.</div>
                 <div onclick="digito('0')" class="tecla">0</div>
-                <div onclick="" class="tecla-esp">%</div>
+                <div onclick="calculadora.porcentagem()" class="tecla-esp">%</div>
                 <div onclick="defIgual()" class="tecla-esp">=</div>
             </div>
         </div>

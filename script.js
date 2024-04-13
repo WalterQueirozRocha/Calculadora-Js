@@ -157,6 +157,59 @@ class Calculadora {
         }
     }
 
+    raizQuadrada() {
+        if (this.estadoErro) return;
+
+        let num = parseFloat(this.nrVisor);
+        if (num < 0) {
+            this.estadoErro = true;
+            return;
+        }
+
+        let resultado = Math.sqrt(num);
+        this.nrVisor = String(resultado).slice(0, 10);
+    }
+
+    // Função para calcular o inverso (1/x)
+    inverso() {
+        if (this.estadoErro) return;
+
+        let num = parseFloat(this.nrVisor);
+        if (num === 0) {
+            this.estadoErro = true;
+            return;
+        }
+
+        let resultado = 1 / num;
+        this.nrVisor = String(resultado).slice(0, 10);
+    }
+
+    // Função para calcular a porcentagem
+    porcentagem() {
+        if (this.estadoErro) return;
+
+        let num = parseFloat(this.nrVisor);
+        let resultado = num / 100;
+        this.nrVisor = String(resultado).slice(0, 10);
+    }
+
+    // Função para trocar o sinal (+/-)
+    trocaSinal() {
+        if (this.estadoErro) return;
+
+        let num = parseFloat(this.nrVisor);
+        this.nrVisor = String(-num).slice(0, 10);
+    }
+
+    // Função para calcular o quadrado
+    quadrado() {
+        if (this.estadoErro) return;
+
+        let num = parseFloat(this.nrVisor);
+        let resultado = num * num;
+        this.nrVisor = String(resultado).slice(0, 10);
+    }
+
 }
 
 // ==================================================================
@@ -164,10 +217,21 @@ class Calculadora {
 // ==================================================================
 
 // ATUALIZA O VALOR NO VISOR
-let atualizaVisor = () => {
-    document.getElementById('visor-id').innerHTML = calculadora.mostrarVisor();
-}
 
+document.querySelector('#visor-id .memoria-m').style.visibility = 'hidden';
+
+let atualizaVisor = () => {
+    let visorAtual = calculadora.mostrarVisor();
+    let memoriaM = document.querySelector('#visor-id .memoria-m');
+
+    if (calculadora.memoria == 0) {
+        memoriaM.style.visibility = 'hidden';
+    } else {
+        memoriaM.style.visibility = 'visible';
+    }
+    
+    document.querySelector('#visor-id .visor-conteudo').innerText = visorAtual;
+}
 
 // RECEBE UM DÍGITO (OU PONTO)
 let digito = (dig) => {

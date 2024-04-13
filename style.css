@@ -89,3 +89,22 @@ body {
     padding-right: 6px;
     box-shadow: 1px 1px 2px 2px rgb(0, 0, 0, 1);
 }
+
+.visor-container {
+    position: relative;
+}
+
+.memoria-m {
+    font-size: 0.6em;
+    color: rgb(0, 255, 0, 0.4);
+    position: absolute;
+    left: 5px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 1;
+}
+
+.visor-conteudo {
+    padding-left: 15px;
+    display: inline-block;
+}
