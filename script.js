@@ -149,7 +149,7 @@ class Calculadora {
         this.iniciouSegundo = false;
         this.ptDecimal = false;
         this.memTemp = '';
-        this.nrVisor = resultado; // Manter o valor original sem arredondamento
+        this.nrVisor = String(resultado).slice(0, 10);
     }
 
     // Limpa dados (exceto memória)
