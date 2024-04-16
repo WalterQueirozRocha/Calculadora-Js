@@ -108,3 +108,8 @@ body {
     padding-left: 15px;
     display: inline-block;
 }
+
+.selected-operation {
+    background-color: #ffcc00; /* Cor de fundo desejada */
+    color: #000000; /* Cor do texto desejada */
+}

@@ -16,22 +16,49 @@ class Calculadora {
             SUM: 4
         };
         this.opAtual = this.op.NOP;
+        this.simboloOperacao = ''; //simbolo da operação inicia vazio
     }
 
     mostrarVisor() {
         if (!this.ligada) {
-            return '';
+            return ''; // Retorna '0' se a calculadora estiver desligada
         }
         if (this.estadoErro) {
             this.nrVisor = '0';
             return 'ERRO!';
         }
-        if (this.nrVisor.length == 0) {
-            this.nrVisor = '0';
+        if (this.nrVisor.length == 0 || this.nrVisor === '0') { // Verifica se nrVisor está vazio ou igual a '0'
+            return '0'; // Retorna '0' se nrVisor estiver vazio ou igual a '0'
         }
-        return this.nrVisor;
+        let parsedNrVisor = parseFloat(this.nrVisor);
+        let formattedNrVisor;
+        if (Number.isInteger(parsedNrVisor)) {
+            formattedNrVisor = parsedNrVisor.toString(); // Se for um número inteiro, não há necessidade de formatar as casas decimais
+        } else {
+            formattedNrVisor = parsedNrVisor.toFixed(9 - Math.floor(Math.log10(Math.abs(parsedNrVisor))) - 1);
+            // Formata as casas decimais, mantendo até 9 casas decimais
+        }
+        formattedNrVisor = formattedNrVisor.replace(/(\.\d*?[1-9])0*$/, '$1');
+        // Remove os zeros à direita das casas decimais, exceto se houver dígitos não zero após o ponto decimal
+        
+        // Adiciona o símbolo da operação se houver uma operação selecionada
+        if (this.simboloOperacao !== '') {
+            formattedNrVisor += ' ' + this.simboloOperacao;
+        }
+        
+        return formattedNrVisor;
     }
-
+    
+    // Função para limpar a seleção da operação e remover o símbolo da operação do visor
+    limparSelecaoOperacao = () => {
+        // Remove a classe 'selected-operation' de todos os botões de operação
+        document.querySelectorAll('.tecla-esp[op]').forEach(opButton => {
+            opButton.classList.remove('selected-operation');
+        });
+        // Remove o símbolo da operação do visor
+        this.simboloOperacao = '';
+        atualizaVisor();
+    }
 
     // recebe dígito
     digito(dig) {
@@ -43,6 +70,7 @@ class Calculadora {
             this.iniciouSegundo = true;
             this.ptDecimal = false;
             this.nrVisor = '0';
+            this.limparSelecaoOperacao(); // Limpa a seleção da operação e remove o símbolo do visor
         }
         if (this.nrVisor.length == 10) return;
         if (dig == '.') {
@@ -56,27 +84,37 @@ class Calculadora {
         }
     }
 
+
+
     // Definir qual a operação atual
     defineOperacao(op) {
         if (!calculadora.ligada) return;
         if (this.estadoErro) return;
+        if(this.opAtual != this.op.NOP){
+            this.igual();
+            this.memTemp = this.nrVisor;
+        }
         switch (op) {
             case '+':
                 this.opAtual = this.op.SUM;
+                this.simboloOperacao = '+'; // Usando o símbolo de mais
                 break;
             case '-':
                 this.opAtual = this.op.SUB;
+                this.simboloOperacao = '-'; // Usando o símbolo de menos
                 break;
             case '*':
                 this.opAtual = this.op.MULT;
+                this.simboloOperacao = '×'; // Usando o símbolo de multiplicação
                 break;
             case '/':
                 this.opAtual = this.op.DIV;
+                this.simboloOperacao = '÷'; // Usando o símbolo de divisão
                 break;
         }
         this.memTemp = this.nrVisor;
     }
-
+    
     // Executa operação: tecla IGUAL
     igual() {
         if (!calculadora.ligada) return;
@@ -91,16 +129,20 @@ class Calculadora {
                     this.estadoErro = true;
                     return;
                 }
-                resultado = num1/num2;
+                resultado = num1 / num2;
+                this.simboloOperacao = '';
                 break;
             case this.op.MULT:
-                resultado = num1*num2;
+                resultado = num1 * num2;
+                this.simboloOperacao = '';
                 break;
             case this.op.SUB:
                 resultado = num1 - num2;
+                this.simboloOperacao = '';
                 break;
             case this.op.SUM:
                 resultado = num1 + num2;
+                this.simboloOperacao = '';
                 break;
         }
         this.opAtual = this.op.NOP;
@@ -113,13 +155,18 @@ class Calculadora {
     // Limpa dados (exceto memória)
     teclaC() {
         if (!calculadora.ligada) return;
-        this.nrVisor = '0';
+        this.nrVisor = '0'; // Define nrVisor como '0' ao pressionar a tecla C
         this.ptDecimal = false;
         this.iniciouSegundo = false;
         this.opAtual = this.op.NOP;
         this.memTemp = '';
         this.estadoErro = false;
+        this.simboloOperacao = ''; // Limpa operacoes 
+        document.querySelectorAll('.tecla-esp[op]').forEach(opButton => {
+            opButton.classList.remove('selected-operation');
+        });
     }
+    
 
     // tecla M+ : acrescenta à memória o número no visor
     teclaMmais() {
@@ -241,11 +288,20 @@ let digito = (dig) => {
 
 // RECEBE OPERAÇÃO ATUAL
 let defOp = (op) => {
-    if (calculadora.opAtual != calculadora.op.NOP) {
-        defIgual();
-        atualizaVisor();
+    // Remove a classe 'selected-operation' de todos os botões de operação
+    document.querySelectorAll('.tecla-esp[op]').forEach(opButton => {
+        opButton.classList.remove('selected-operation');
+    });
+    
+    // Adiciona a classe 'selected-operation' ao botão da operação selecionada
+    let selectedOpButton = document.querySelector(`.tecla-esp[op="${op}"]`);
+    if (selectedOpButton) {
+        selectedOpButton.classList.add('selected-operation');
     }
+    
+    // Define a operação atual e atualiza o visor
     calculadora.defineOperacao(op);
+    atualizaVisor();
 }
 
 // CALCULA A OPERAÇÃO
@@ -281,16 +337,22 @@ let teclaCLM = () => {
     calculadora.teclaCLM();
 }
 
-//função on/off
+// Função para desligar a calculadora
 let teclaOnOff = () => {
     calculadora.teclaOnOff();
+    // Se a calculadora estiver desligada, remova a classe de seleção de todos os botões de operação
+    if (!calculadora.ligada) {
+        document.querySelectorAll('.tecla-esp').forEach(opButton => {
+            opButton.classList.remove('selected-operation');
+        });
+    }
     calculadora.teclaC();
     atualizaVisor();
 }
+
 
 // ========================================================
 //  INÍCIO DO PROCESSAMENTO
 // ========================================================
 
 let calculadora = new Calculadora();
-
